@@ -3,24 +3,14 @@ import {
   createMcpHandler,
   experimental_withMcpAuth as withMcpAuth,
 } from "@vercel/mcp-adapter";
-import { auth, clerkClient } from "@clerk/nextjs/server";
+import { auth } from "@clerk/nextjs/server";
 
-const clerk = await clerkClient();
+import { getClerkUserData } from "@/tools/get-clerk-user-data";
+
+export type McpServer = Parameters<Parameters<typeof createMcpHandler>[0]>[0];
 
 const handler = createMcpHandler((server) => {
-  server.tool(
-    "get-clerk-user-data",
-    "Gets data about the Clerk user that authorized this request",
-    {},
-    async (_, { authInfo }) => {
-      const userId = authInfo!.extra!.userId! as string;
-      const userData = await clerk.users.getUser(userId);
-
-      return {
-        content: [{ type: "text", text: JSON.stringify(userData) }],
-      };
-    }
-  );
+  getClerkUserData(server);
 });
 
 const authHandler = withMcpAuth(
