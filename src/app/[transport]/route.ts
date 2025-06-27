@@ -6,11 +6,13 @@ import {
 import { auth } from "@clerk/nextjs/server";
 
 import { getClerkUserData } from "@/tools/get-clerk-user-data";
+import { writeClerkUserData } from "@/tools/write-clerk-user-data";
 
 export type McpServer = Parameters<Parameters<typeof createMcpHandler>[0]>[0];
 
 const handler = createMcpHandler((server) => {
   getClerkUserData(server);
+  writeClerkUserData(server);
 });
 
 const authHandler = withMcpAuth(
